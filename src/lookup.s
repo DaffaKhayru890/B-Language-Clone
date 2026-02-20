@@ -1,5 +1,6 @@
 section .data 
     global char_table
+    global jump_table
 
     ; =========== Table lookup for ASCII ===========
     align 256
@@ -48,4 +49,12 @@ section .data
         times 130 db 0      ; 255 others char 
 
     ; =========== Table lookup for jump ===========
-    
+    align 256
+    jump_table:
+        dq handle_unknown       ; 0 handle uknown char 
+        dq handle_eof           ; 1 handle eof or null terminator char 
+        dq handle_whitespace    ; 2 handle whiespace 
+        dq handle_operator      ; 3 handle operator char 
+        dq handle_delimiter     ; 4 handle delimiter char 
+        dq 
+

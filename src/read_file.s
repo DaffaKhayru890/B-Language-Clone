@@ -5,8 +5,6 @@ section .note.GNU-stack noalloc noexec nowrite progbits
 
 section .bss 
     global source_code
-    global fd
-    global bytes_read
 
     source_code resb 4097
     fd resd 1
