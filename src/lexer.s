@@ -54,11 +54,43 @@ _lexer:
     mov rdi, [token_count]
     
     ; =========== Check if eof ===========
-    mov ebx, [char_table+rax]
-    jmp [jump_table+ebx]
+    mov rbx, [char_table+rax]
+    jmp [jump_table+rbx*8]
 
-    set_eof:
+    handle_whitespace:
+        ; advanced one char ahead
+        inc rcx 
+        mov rax, [rsi+rcx]
+
+        ; jump to another handler 
+        mov rbx, [char_table+rax]
+        jmp [jump_table+rbx*8]
+
+    handle_alphabet:
+        ; set current char to token lexeme 
+        mov [token_lexeme+rbp], al 
+
+        ; advanced one char ahead
+        inc rcx 
+        inc rbp 
+        mov rax, [rsi+rcx]
+
+        ; check if it's whitespace or eof 
+        mov rbx, [char_table+rax]
+        jmp [jump_table+rbx*8]
+
+        jmp handle_alphabet
+
+    handle_eof:
+        ; insert current token to 
+        mov [token_lexeme+rbp], al 
         
+        ; insert token type 
+        mov rdx, TOKEN_EOF
+        mov [token_type], rdx 
+
+        jmp done 
 
     done:
+        mov [lexer_count], rcx 
         ret 

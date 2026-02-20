@@ -27,7 +27,7 @@ section .data
         db 3                ; 45 -
         times 1 db 0        ; 46 others char 
         db 3                ; 47 /
-        times 10 db 7       ; 57 digit 
+        times 10 db 8       ; 57 digit 
         db 4                ; 58 :
         db 4                ; 59 ; 
         db 3                ; 60 <
@@ -35,14 +35,14 @@ section .data
         db 3                ; 62 >
         db 6                ; 63 ?
         db 0                ; 64 others char
-        times 26 db 6       ; 90 alphabet uppercase 
+        times 26 db 7       ; 90 alphabet uppercase 
         db 4                ; 91 [
         db 3                ; 92 \
         db 4                ; 93 ]
         db 3                ; 94 ^
         db 9                ; 95 _
         db 0                ; 96 others char 
-        times 26 db 6       ; 122 alphabet lowercase 
+        times 26 db 7       ; 122 alphabet lowercase 
         db 4                ; 123 {
         db 0                ; 124 others char 
         db 4                ; 125 }
@@ -56,5 +56,8 @@ section .data
         dq handle_whitespace    ; 2 handle whiespace 
         dq handle_operator      ; 3 handle operator char 
         dq handle_delimiter     ; 4 handle delimiter char 
-        dq 
+        dq handle_quotes        ; 5 handle quotes char 
+        dq handle_question      ; 6 handle question char 
+        dq handle_alphabet      ; 7 handle alphabet 
+        dq handle_digit         ; 8 handle digit 
 
