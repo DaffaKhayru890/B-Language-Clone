@@ -30,11 +30,11 @@ section .bss
     global token_type 
     global token_count
 
-    lexer_count resd 1
+    lexer_count resq 1
     
     token_lexeme resb 258
-    token_type resd 1
-    token_count resd 1
+    token_type resb 1
+    token_count resb 1
 
 section .text 
     global _lexer 
@@ -44,50 +44,67 @@ section .text
     extern char_table
     extern jump_table
 
+    ; global handle_unknown
+    global handle_eof
+    global handle_whitespace
+    ; global handle_single_char
+    global handle_alphabet
+    ; global handle_digit
+
+    extern char_table
+    extern jump_table
+
 _lexer: 
     ; =========== Setup lexer ===========
-    xor rdx, rdx
     xor rbp, rbp
-    mov rcx, [lexer_count]
+    movzx rcx, byte [lexer_count]
     mov rsi, source_code
-    mov rax, [rsi+rcx]
-    mov rdi, [token_count]
+    movzx rax, byte [rsi+rcx]
+    movzx rdi, byte [token_count]
     
     ; =========== Check if eof ===========
-    mov rbx, [char_table+rax]
+    movzx rbx, byte [char_table+rax]
     jmp [jump_table+rbx*8]
 
     handle_whitespace:
         ; advanced one char ahead
         inc rcx 
-        mov rax, [rsi+rcx]
+        movzx rax, byte [rsi+rcx]
 
         ; jump to another handler 
-        mov rbx, [char_table+rax]
+        movzx rbx, byte [char_table+rax]
         jmp [jump_table+rbx*8]
 
     handle_alphabet:
         ; set current char to token lexeme 
-        mov [token_lexeme+rbp], al 
+        mov byte [token_lexeme+rbp], al 
 
         ; advanced one char ahead
         inc rcx 
         inc rbp 
-        mov rax, [rsi+rcx]
+        movzx rax, byte [rsi+rcx]
 
-        ; check if it's whitespace or eof 
-        mov rbx, [char_table+rax]
-        jmp [jump_table+rbx*8]
+        ; handle identifier if curent token is single char or whitespace
+        cmp al, '('
+        je handle_identifier
 
         jmp handle_alphabet
+    
+    handle_identifier:
+        ; insert current token to lexeme 
+        mov byte [token_lexeme+rbp], al 
+
+        ; insert token type
+        mov byte [token_type], TOKEN_IDENTIFIER  
+
+        jmp done 
 
     handle_eof:
-        ; insert current token to 
-        mov [token_lexeme+rbp], al 
+        ; insert current token to lexemr 
+        mov byte [token_lexeme+rbp], al 
         
         ; insert token type 
-        mov rdx, TOKEN_EOF
-        mov [token_type], rdx 
+        mov byte [token_type], TOKEN_EOF 
 
         jmp done 
 
