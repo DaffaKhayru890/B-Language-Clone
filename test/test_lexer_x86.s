@@ -8,10 +8,24 @@ section .data
     newline db '', 10
     let_newline equ $ - newline
 
-    type_name_table:
-        dq 'EOF'        ; 0 TOKEN_EOF
-        dq 'IDENTIFIER' ; 1 TOKEN_IDENTIFIER
+    str_eof        db 'EOF', 0
+    len_eof        equ $ - str_eof
 
+    str_identifier db 'IDENTIFIER', 0
+    len_identifier equ $ - str_identifier
+
+    str_lparen     db 'LPAREN', 0
+    len_lparen     equ $ - str_lparen
+
+    type_name_table:
+        dq str_eof
+        dq str_identifier
+        dq str_lparen
+
+    type_len_table:
+        dq len_eof
+        dq len_identifier
+        dq len_lparen
 
 section .text 
     global _start 
@@ -50,7 +64,7 @@ _start:
 
         ; print token lexeme string 
         mov rdi, token_lexeme
-        mov rsi, token_count
+        movzx rsi, byte [token_count]
 
         call print 
 
@@ -61,7 +75,11 @@ _start:
         call print 
 
         ; print token type 
-        
+        movzx rax, byte [token_type]
+        mov rdi, [type_name_table+rax*8]
+        mov rsi, [type_len_table+rax*8]
+
+        call print 
 
         ; print newline 
         mov rdi, newline

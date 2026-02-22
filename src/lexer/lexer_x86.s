@@ -55,9 +55,15 @@ section .text
     extern jump_table
 
 _lexer: 
+    ; =========== Reset token lexeme ===========
+    mov rdi, token_lexeme
+    mov rcx, 258
+    xor al, al 
+    rep stosb 
+
     ; =========== Setup lexer ===========
     xor rbp, rbp
-    movzx rcx, byte [lexer_count]
+    mov rcx, [lexer_count]
     mov rsi, source_code
     movzx rax, byte [rsi+rcx]
     movzx rdi, byte [token_count]
@@ -76,7 +82,9 @@ _lexer:
         jmp [jump_table+rbx*8]
 
     handle_single_char:
-        ret
+        ; check if it's lparen
+        cmp al, '('
+        je handle_lparen
 
     handle_alphabet:
         ; set current char to token lexeme 
@@ -97,13 +105,22 @@ _lexer:
         ret
     
     handle_identifier:
-        ; insert current token to lexeme 
-        mov byte [token_lexeme+rbp], al 
+        ; set token count here 
+        mov byte [token_count], bpl
 
         ; insert token type
         mov byte [token_type], TOKEN_IDENTIFIER  
 
         jmp done 
+
+    handle_lparen:
+        ; insert token to token lexeme
+        mov [token_lexeme+ebp], al
+
+        ; insert token type 
+        mov byte [token_type], TOKEN_LPAREN
+
+        jmp done
 
     handle_unknown:
         ret 
