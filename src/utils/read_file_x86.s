@@ -27,7 +27,7 @@ _read_file:
     mov rax, 0
     mov rdi, [fd]
     mov rsi, source_code 
-    mov rdx, 4096
+    mov rdx, 4097
     syscall 
 
     mov [bytes_read], rax
@@ -39,3 +39,5 @@ _read_file:
     syscall
 
     ret
+
+section .note.GNU-stack noalloc noexec nowrite progbits

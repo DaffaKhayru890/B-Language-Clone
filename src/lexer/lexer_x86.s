@@ -44,12 +44,12 @@ section .text
     extern char_table
     extern jump_table
 
-    ; global handle_unknown
+    global handle_unknown
     global handle_eof
     global handle_whitespace
-    ; global handle_single_char
+    global handle_single_char
     global handle_alphabet
-    ; global handle_digit
+    global handle_digit
 
     extern char_table
     extern jump_table
@@ -75,6 +75,9 @@ _lexer:
         movzx rbx, byte [char_table+rax]
         jmp [jump_table+rbx*8]
 
+    handle_single_char:
+        ret
+
     handle_alphabet:
         ; set current char to token lexeme 
         mov byte [token_lexeme+rbp], al 
@@ -90,6 +93,9 @@ _lexer:
 
         jmp handle_alphabet
     
+    handle_digit:
+        ret
+    
     handle_identifier:
         ; insert current token to lexeme 
         mov byte [token_lexeme+rbp], al 
@@ -98,6 +104,9 @@ _lexer:
         mov byte [token_type], TOKEN_IDENTIFIER  
 
         jmp done 
+
+    handle_unknown:
+        ret 
 
     handle_eof:
         ; insert current token to lexemr 
@@ -111,3 +120,5 @@ _lexer:
     done:
         mov [lexer_count], rcx 
         ret 
+
+section .note.GNU-stack noalloc noexec nowrite progbits

@@ -2,12 +2,12 @@ section .data
     global char_table
     global jump_table
 
-    ; extern handle_unknown
+    extern handle_unknown
     extern handle_eof
     extern handle_whitespace
-    ; extern handle_single_char
+    extern handle_single_char
     extern handle_alphabet
-    ; extern handle_digit
+    extern handle_digit
 
     ; =========== Table lookup for ASCII ===========
     align 256
@@ -58,13 +58,14 @@ section .data
     ; =========== Table lookup for jump ===========
     align 256
     jump_table:
-        ; dq handle_unknown       ; 0 handle uknown char 
+        dq handle_unknown       ; 0 handle uknown char 
         dq handle_eof           ; 1 handle eof or null terminator char 
         dq handle_whitespace    ; 2 handle whiespace 
-        ; dq handle_single_char   ; 3 handle operator char 
-        ; dq handle_single_char   ; 4 handle delimiter char 
-        ; dq handle_single_char   ; 5 handle quotes char 
-        ; dq handle_single_char   ; 6 handle question char 
+        dq handle_single_char   ; 3 handle operator char 
+        dq handle_single_char   ; 4 handle delimiter char 
+        dq handle_single_char   ; 5 handle quotes char 
+        dq handle_single_char   ; 6 handle question char 
         dq handle_alphabet      ; 7 handle alphabet 
-        ; dq handle_digit         ; 8 handle digit 
+        dq handle_digit         ; 8 handle digit 
 
+section .note.GNU-stack noalloc noexec nowrite progbits
